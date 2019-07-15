@@ -11,7 +11,7 @@ const adminPassword = password.hashPassword('scrip#9ju');
 const adminQuery = `INSERT INTO users(first_name, last_name, email, password, is_admin) VALUES 
 ('james', 'Ugbanu', 'jamesugbanu@gmail.com', '${adminPassword}', true) RETURNING *;`;
 
-const dbQueries = `${adminQuery}`;
+const dbQueries = `${destroyQuery}${createQuery}${adminQuery}`;
 
 client.query(dbQueries, (err, res) => {
   console.log(err)
