@@ -17,7 +17,7 @@ const createUserTable = `
 
 const createTaskTable = `
   CREATE TABLE IF NOT EXISTS tasks(
-    id SERIAL PRIMARY KEY NOT NULL,
+    id UUID NOT NULL DEFAULT uuid_generate_v4(),
     user_id INTEGER REFERENCES users(id) NOT NULL,
     task_name VARCHAR(50) NOT NULL,
     due_date TIMESTAMP WITH TIME ZONE,
