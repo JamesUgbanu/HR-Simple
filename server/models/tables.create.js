@@ -11,7 +11,8 @@ const createUserTable = `
     last_loggedin TIMESTAMP WITH TIME ZONE,
     role INTEGER,
     is_admin BOOLEAN DEFAULT false,
-    created_on TIMESTAMP WITH TIME ZONE DEFAULT now()
+    created_on TIMESTAMP WITH TIME ZONE DEFAULT now(),
+    UNIQUE (email)
   );
 `;
 

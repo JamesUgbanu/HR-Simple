@@ -1,5 +1,5 @@
 import dotenv from 'dotenv';
-import {Client}  from 'pg';
+import { Client } from 'pg';
 import setup from '../config/config';
 
 dotenv.config();
