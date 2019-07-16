@@ -14,6 +14,5 @@ const adminQuery = `INSERT INTO users(first_name, last_name, email, password, is
 const dbQueries = `${destroyQuery}${createQuery}${adminQuery}`;
 
 client.query(dbQueries, (err, res) => {
-  console.log(err)
   client.end();
 });
