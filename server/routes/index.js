@@ -13,7 +13,7 @@ const routes = (app) => {
       .isEmpty().withMessage('first Name is required'),
     check('email')
       .isEmail().withMessage('Enter a valid email')
-  ], validation.validatorError, UsersController.addUser);
+  ], validation.validatorError, validation.checkDuplicateEmail, UsersController.addUser);
 };
 
 export default routes;

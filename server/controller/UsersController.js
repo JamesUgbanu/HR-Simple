@@ -36,7 +36,6 @@ class UsersController {
   static addUserQuery(request, response, query) {
     client.query(query)
       .then((dbResult) => {
-        console.log(dbResult.rows);
         const currentToken = generateToken({ id: dbResult.rows[0].id, isAdmin: dbResult.rows[0].is_admin });
         process.env.CURRENT_TOKEN = currentToken;
         return response.status(201).json({
