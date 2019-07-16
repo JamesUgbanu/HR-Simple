@@ -1,5 +1,6 @@
 import conn from '../helpers/conn';
 import generateToken from '../helpers/token';
+import transport from '../helpers/mailTransporter';
 
 const client = conn();
 client.connect();
@@ -21,7 +22,6 @@ class UsersController {
       text: 'INSERT INTO users(first_name, last_name, email) VALUES ($1, $2, $3) RETURNING *',
       values: [firstName, lastName, email],
     };
-
     UsersController.addUserQuery(request, response, query);
   }
 
@@ -36,8 +36,15 @@ class UsersController {
   static addUserQuery(request, response, query) {
     client.query(query)
       .then((dbResult) => {
-        const currentToken = generateToken({ id: dbResult.rows[0].id, isAdmin: dbResult.rows[0].is_admin });
-        process.env.CURRENT_TOKEN = currentToken;
+        const currentToken = generateToken({ id: dbResult.rows[0].id });
+        const msg = {
+          from: 'hr@lonadek.com',
+          to: dbResult.rows[0].email,
+          subject: 'Please confirm your email address',
+          html: `<p>Please click the link to confirm your email address and activate your account.<br>
+          <a href="lonadek.com/register/confirm/${currentToken}">Confirm</a></p>`
+        };
+        transport.sendMail(msg);
         return response.status(201).json({
           status: 201,
           data: {
@@ -45,7 +52,7 @@ class UsersController {
             id: dbResult.rows[0].id,
             firstName: dbResult.rows[0].first_name,
             lastName: dbResult.rows[0].last_name,
-            email: dbResult.rows[0].email,
+            email: dbResult.rows[0].email
           },
         });
       })
