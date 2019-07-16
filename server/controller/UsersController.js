@@ -49,10 +49,7 @@ class UsersController {
           },
         });
       })
-      .catch((error) => {
-        console.log(`Error: ${error}`);
-        response.status(500).send('Server Error');
-      });
+      .catch();
   }
 }
 export default UsersController;

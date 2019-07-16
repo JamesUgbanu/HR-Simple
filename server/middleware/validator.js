@@ -44,9 +44,7 @@ class Validator {
             });
         }
         return next();
-      }).catch((error) => {
-        response.status(500).send('Server Error');
-      });
+      }).catch();
   }
 }
 

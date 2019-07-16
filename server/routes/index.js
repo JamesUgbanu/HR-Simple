@@ -10,7 +10,14 @@ const routes = (app) => {
   app.post('/api/v1/auth/addUser', [
     check('firstName')
       .not()
-      .isEmpty().withMessage('first Name is required'),
+      .isEmpty().withMessage('first Name is required')
+      .isLength({ min: 3 }).withMessage('first name should be atleast 3 characters')
+      .isAlpha().withMessage('first name should only contain alphabet'),
+    check('lastName')
+      .not()
+      .isEmpty().withMessage('last Name is required')
+      .isLength({ min: 3 }).withMessage('last name should be atleast 3 characters')
+      .isAlpha().withMessage('last name should only contain alphabet'),
     check('email')
       .isEmail().withMessage('Enter a valid email')
   ], validation.validatorError, validation.checkDuplicateEmail, UsersController.addUser);

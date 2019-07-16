@@ -9,7 +9,7 @@
     "lint": "eslint ./server",
     "start": "babel-node app.js",
     "pretest": "npm run db-migrate",
-    "test": "set NODE_ENV=test&& nyc --reporter=html --reporter=text mocha --compilers js:babel-register ./server/tests/ --timeout 10000 --exit",
+    "test": "set NODE_ENV=test&& nyc --reporter=html --reporter=text mocha --require babel-register ./server/tests/ --timeout 10000 --exit",
     "coveralls": "nyc npm test&& nyc report --reporter=text-lcov | coveralls",
     "coverage": "nyc report --reporter=text-lcov | coveralls",
     "migrate": "set NODE_ENV=production&& babel-node server/models/index.js",
@@ -33,6 +33,7 @@
   "homepage": "https://github.com/techneplus/hr-simple#readme",
   "devDependencies": {
     "babel-eslint": "^10.0.2",
+    "babel-register": "^6.26.0",
     "coveralls": "^3.0.4",
     "eslint": "^6.0.1",
     "eslint-config-airbnb": "^17.1.0",
@@ -47,7 +48,6 @@
   "dependencies": {
     "babel-cli": "^6.26.0",
     "babel-preset-env": "^1.7.0",
-    "babel-register": "^6.26.0",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.19.0",
     "chai": "^4.2.0",
