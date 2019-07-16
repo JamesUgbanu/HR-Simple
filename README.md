@@ -1,1 +1,2 @@
 # HR-Simple
+[![Build Status](https://travis-ci.org/techneplus/HR-Simple.svg?branch=develop)](https://travis-ci.org/techneplus/HR-Simple)[![Coverage Status](https://coveralls.io/repos/github/techneplus/HR-Simple/badge.svg?branch=develop)](https://coveralls.io/github/techneplus/HR-Simple?branch=develop)[![Maintainability](https://api.codeclimate.com/v1/badges/057875c1039f86cd3849/maintainability)](https://codeclimate.com/github/techneplus/HR-Simple/maintainability)
