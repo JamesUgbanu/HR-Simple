@@ -1,7 +1,12 @@
+import jwt from 'jsonwebtoken';
+import dotenv from 'dotenv';
 import conn from '../helpers/conn';
 import generateToken from '../helpers/token';
 import transport from '../helpers/mailTransporter';
+import config from '../config/config';
 
+dotenv.config();
+const { secretKey } = config;
 const client = conn();
 client.connect();
 class UsersController {
@@ -57,6 +62,30 @@ class UsersController {
         });
       })
       .catch();
+  }
+
+  /**
+   *  Return user account response
+   *  @param {Object} response
+   *  @return {Object} json
+   *
+   */
+  static confirmUser(request, response) {
+    try {
+      const { token } = request.params;
+      const verifiedToken = jwt.verify(token, secretKey);
+      return response.status(200).json({
+        status: 200,
+        data: {
+          email: verifiedToken.user.email
+        },
+      });
+    } catch (error) {
+      return response.status(401).json({
+        status: 401,
+        error: 'Inalid token',
+      });
+    }
   }
 }
 export default UsersController;
