@@ -28,6 +28,13 @@ const routes = (app) => {
       .isLength({ min: 5 }).withMessage('The password must be 5+ chars long')
       .matches(/\d/).withMessage('The password must contain a number')
   ], validation.validatorError, UsersController.updateUserPassword);
+  app.post('/api/v1/auth/signIn', [
+    check('email')
+      .isEmail().withMessage('Enter a valid email'),
+    check('password')
+      .not()
+      .isEmpty().withMessage('Password is required')
+  ], validation.validatorError, UsersController.signIn);
 };
 
 export default routes;

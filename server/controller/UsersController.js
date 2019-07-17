@@ -143,5 +143,58 @@ class UsersController {
       },
     });
   }
+
+  /**
+   *  Sign in user
+   *  @param {Object} requestuest
+   *  @param {Object} response
+   *  @return {Object} json
+   */
+  static signIn(request, response) {
+    const { email, password } = request.body;
+    const query = `SELECT * FROM users WHERE email = '${email}'`;
+
+    client.query(query)
+      .then((dbResult) => {
+        if (dbResult.rowCount === 0 || !passwordHelper.comparePasswords(password, dbResult.rows[0].password)) {
+          return UsersController.passwordFailureResponse(response);
+        }
+
+        const token = generateToken({ id: dbResult.rows[0].id, isadmin: dbResult.rows[0].is_admin });
+        process.env.CURRENT_TOKEN = token;
+
+        return UsersController.loginSuccessResponse(response, token, dbResult.rows[0]);
+      })
+      .catch();
+  }
+
+  /**
+   *  return message for non matching password in login or not found
+   *  @param {Object} response
+   *  @return {Object} json
+   */
+  static passwordFailureResponse(response) {
+    return response.status(401).json({
+      status: 401,
+      error: 'Email or password is incorrect',
+    });
+  }
+
+  /**
+   *  return message for successful login
+   *  @param {Object} response
+   *  @return {Object} json
+   */
+  static loginSuccessResponse(response, currentToken, data) {
+    return response.status(200).json({
+      status: 200,
+      data: {
+        id: data.id,
+        firstName: data.first_name,
+        lastName: data.last_name,
+        token: currentToken,
+      },
+    });
+  }
 }
 export default UsersController;
