@@ -36,13 +36,13 @@ class UsersController {
   static addUserQuery(request, response, query) {
     client.query(query)
       .then((dbResult) => {
-        const currentToken = generateToken({ id: dbResult.rows[0].id });
+        const currentToken = generateToken({ id: dbResult.rows[0].id, email: dbResult.rows[0].email });
         const msg = {
           from: 'hr@lonadek.com',
           to: dbResult.rows[0].email,
           subject: 'Please confirm your email address',
           html: `<p>Please click the link to confirm your email address and activate your account.<br>
-          <a href="lonadek.com/register/confirm/${currentToken}">Confirm</a></p>`
+          <a href="hr-simple.herokuapp.com/register/confirm/${currentToken}">Confirm Email Address</a></p>`
         };
         transport.sendMail(msg);
         return response.status(201).json({
