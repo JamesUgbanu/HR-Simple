@@ -5,6 +5,7 @@ import generateToken from '../helpers/token';
 import passwordHelper from '../helpers/password';
 import transport from '../helpers/mailTransporter';
 import config from '../config/config';
+import ValidationHelper from '../helpers/validationHelper';
 
 dotenv.config();
 const { secretKey } = config;
@@ -84,7 +85,7 @@ class UsersController {
     } catch (error) {
       return response.status(401).json({
         status: 401,
-        error: 'Inalid token',
+        error: 'Invalid token',
       });
     }
   }
@@ -98,8 +99,14 @@ class UsersController {
   static updateUserPassword(request, response) {
     const { email } = request.params;
     const { password } = request.body;
-    const hashedPassword = passwordHelper.hashPassword(password.trim());
-
+    const hashedPassword = passwordHelper.hashPassword(password);
+    const validEmail = ValidationHelper.checkValidEmail(email);
+    if (!validEmail) {
+      return response.status(400).json({
+        status: 400,
+        error: 'Invalid Email Address'
+      });
+    }
     const query = `UPDATE users set password='${hashedPassword}' WHERE
      email='${email}' RETURNING *`;
 

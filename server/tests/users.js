@@ -175,7 +175,7 @@ describe('USER CONTROLLER ', () => {
   describe('GET /register/confirm/:token endpoint', () => {
     it('it should return the specific user email', (done) => {
       chai.request(app)
-        .get(`/register/confirm/${currrentToken}`)
+        .get(`/api/v1/register/confirm/${currrentToken}`)
         .end((error, response) => {
           expect(response).to.have.status(200);
           expect(response.body).to.be.an('object');
@@ -185,11 +185,92 @@ describe('USER CONTROLLER ', () => {
     });
     it('it should return an error if an invalid token is provided', (done) => {
       chai.request(app)
-        .get(`/register/confirm/ghjhjhjjhjh878mh5g`)
+        .get(`/api/v1/register/confirm/ghjhjhjjhjh878mh5g`)
         .end((error, response) => {
           expect(response).to.have.status(401);
           expect(response.body).to.be.an('object');
-          expect(response.body.error).to.equal('Inalid token');
+          expect(response.body.error).to.equal('Invalid token');
+          done();
+        });
+    });
+  });
+  describe('PUT /user/:email/password endpoint', () => {
+    it('it should update the password of a user', (done) => {
+      chai.request(app)
+        .put(`/api/v1/user/singlecliq@gmail.com/password`)
+        .send({
+          password: 'ghhhh$i0sdf',
+        })
+        .end((error, response) => {
+          expect(response).to.have.status(202);
+          expect(response.body).to.be.an('object');
+          expect(response.body).to.have.property('data');
+          done();
+        });
+    });
+
+    it('it should not update the password of a user with invalid email', (done) => {
+      chai.request(app)
+        .put(`/api/v1/user/singlecliqgmail.com/password`)
+        .send({
+          password: 'dormant12d',
+        })
+        .end((error, response) => {
+          expect(response).to.have.status(400);
+          expect(response.body).to.be.an('object');
+          expect(response.body.error).to.equal('Invalid Email Address');
+          done();
+        });
+    });
+    it('it should not update the password of a user when email is not found', (done) => {
+      chai.request(app)
+        .put(`/api/v1/user/singlecliq1@gmail.com/password`)
+        .send({
+          password: 'dormant12d',
+        })
+        .end((error, response) => {
+          expect(response).to.have.status(200);
+          expect(response.body).to.be.an('object');
+          expect(response.body.error).to.equal('User not found');
+          done();
+        });
+    });
+    it('it should not update the password of a user when password is not less than 5 character', (done) => {
+      chai.request(app)
+        .put(`/api/v1/user/singlecliq@gmail.com/password`)
+        .send({
+          password: 'dorm',
+        })
+        .end((error, response) => {
+          expect(response).to.have.status(400);
+          expect(response.body).to.be.an('object');
+          expect(response.body.errors[0].msg).to.equal('The password must be 5+ chars long');
+          done();
+        });
+    });
+    it('it should not update the password of a user when password contain common word', (done) => {
+      chai.request(app)
+        .put(`/api/v1/user/singlecliq@gmail.com/password`)
+        .send({
+          password: 'password',
+        })
+        .end((error, response) => {
+          expect(response).to.have.status(400);
+          expect(response.body).to.be.an('object');
+          expect(response.body.errors[0].msg).to.equal('Do not use a common word as the password');
+          done();
+        });
+    });
+    it('it should not update the password of a user when password does not contain number', (done) => {
+      chai.request(app)
+        .put(`/api/v1/user/singlecliq@gmail.com/password`)
+        .send({
+          password: 'dormant',
+        })
+        .end((error, response) => {
+          expect(response).to.have.status(400);
+          expect(response.body).to.be.an('object');
+          expect(response.body.errors[0].msg).to.equal('The password must contain a number');
           done();
         });
     });
