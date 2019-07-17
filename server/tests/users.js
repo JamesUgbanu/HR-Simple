@@ -6,9 +6,23 @@ import testData from './testData';
 const { expect } = chai;
 chai.use(chaiHttp);
 const addUserURL = '/api/v1/auth/addUser';
+let currrentToken;
 
 describe('USER CONTROLLER ', () => {
-    describe('POST /api/v1/auth/addUser', () => {
+  describe('POST /api/v1/auth/addUser', () => {
+    before((done) => {
+      chai.request(app)
+        .post(`${addUserURL}`)
+        .send({
+          firstName: 'James',
+          lastName: 'Joseph',
+          email: 'singlecliq@gmail.com'
+        })
+        .end((error, response) => {
+          currrentToken = response.body.data.token;
+          done();
+        });
+    });
     it('Endpoint does not exist', (done) => {
       chai.request(app)
         .post(`${addUserURL}/test`)
@@ -154,6 +168,28 @@ describe('USER CONTROLLER ', () => {
           expect(response).to.have.status(400);
           expect(response.body).to.be.an('object');
           expect(response.body.errors[0].msg).to.equal('Enter a valid email');
+          done();
+        });
+    });
+  });
+  describe('GET /register/confirm/:token endpoint', () => {
+    it('it should return the specific user email', (done) => {
+      chai.request(app)
+        .get(`/register/confirm/${currrentToken}`)
+        .end((error, response) => {
+          expect(response).to.have.status(200);
+          expect(response.body).to.be.an('object');
+          expect(response.body.data.email).to.equal('singlecliq@gmail.com');
+          done();
+        });
+    });
+    it('it should return an error if an invalid token is provided', (done) => {
+      chai.request(app)
+        .get(`/register/confirm/ghjhjhjjhjh878mh5g`)
+        .end((error, response) => {
+          expect(response).to.have.status(401);
+          expect(response.body).to.be.an('object');
+          expect(response.body.error).to.equal('Inalid token');
           done();
         });
     });
