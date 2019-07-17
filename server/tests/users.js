@@ -6,6 +6,7 @@ import testData from './testData';
 const { expect } = chai;
 chai.use(chaiHttp);
 const addUserURL = '/api/v1/auth/addUser';
+const loginURL = '/api/v1/auth/signIn';
 let currrentToken;
 
 describe('USER CONTROLLER ', () => {
@@ -271,6 +272,81 @@ describe('USER CONTROLLER ', () => {
           expect(response).to.have.status(400);
           expect(response.body).to.be.an('object');
           expect(response.body.errors[0].msg).to.equal('The password must contain a number');
+          done();
+        });
+    });
+  });
+  describe('POST /api/v1/auth/signin', () => {
+    it('it should signin a user with correct and complete information', (done) => {
+      chai.request(app)
+        .post(`${loginURL}`)
+        .send({
+          email: 'singlecliq@gmail.com',
+          password: 'ghhhh$i0sdf',
+        })
+        .end((error, response) => {
+          expect(response).to.have.status(200);
+          expect(response.body).to.be.an('object');
+          expect(response.body.data.firstName).to.equal(testData.newUsers[0].firstName);
+          done();
+        });
+    });
+    it('should not signin a user with an invalid email address', (done) => {
+      chai.request(app)
+        .post(`${loginURL}`)
+        .send({
+          email: '@gmail',
+          password: 'ghhhh$i0sdf',
+        })
+        .end((error, response) => {
+          expect(response).to.have.status(400);
+          expect(response.body).to.be.an('object');
+          expect(response.body.errors[0].msg).to.equal('Enter a valid email');
+          done();
+        });
+    });
+
+    it('should not signin a user with an empty password field', (done) => {
+      chai.request(app)
+        .post(`${loginURL}`)
+        .send({
+          email: 'singlecliq@gmail.com',
+          password: '',
+        })
+        .end((error, response) => {
+          expect(response).to.have.status(400);
+          expect(response.body).to.be.an('object');
+          expect(response.body.errors[0].msg).to.equal('Password is required');
+          done();
+        });
+    });
+
+    it('should not signin a user where email and password is incorrect', (done) => {
+      chai.request(app)
+        .post(`${loginURL}`)
+        .send({
+          email: 'singlecliq@gmail.com',
+          password: 'whatareyousaying',
+        })
+        .end((error, response) => {
+          expect(response).to.have.status(401);
+          expect(response.body).to.be.an('object');
+          expect(response.body.error).to.equal('Email or password is incorrect');
+          done();
+        });
+    });
+
+    it('should not signin a user where email does not exist in the database', (done) => {
+      chai.request(app)
+        .post(`${loginURL}`)
+        .send({
+          email: 'joseph@gmail.com',
+          password: 'ghhhh$i0sdf',
+        })
+        .end((error, response) => {
+          expect(response).to.have.status(401);
+          expect(response.body).to.be.an('object');
+          expect(response.body.error).to.equal('Email or password is incorrect');
           done();
         });
     });
