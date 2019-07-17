@@ -1,6 +1,6 @@
 const newUsers = [
   {
-    firstName: 'james',
+    firstName: 'James',
     lastName: 'Joseph',
     email: 'p@gmail.com',
     password: '123456',
