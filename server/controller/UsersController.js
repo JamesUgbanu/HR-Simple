@@ -2,6 +2,7 @@ import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 import conn from '../helpers/conn';
 import generateToken from '../helpers/token';
+import passwordHelper from '../helpers/password';
 import transport from '../helpers/mailTransporter';
 import config from '../config/config';
 
@@ -86,6 +87,54 @@ class UsersController {
         error: 'Inalid token',
       });
     }
+  }
+
+  /**
+   *  User change Change Password
+   *  @param {Object} request
+   *  @param {Object} response
+   *  @return {Object} json
+   */
+  static updateUserPassword(request, response) {
+    const { email } = request.params;
+    const { password } = request.body;
+    const hashedPassword = passwordHelper.hashPassword(password.trim());
+
+    const query = `UPDATE users set password='${hashedPassword}' WHERE
+     email='${email}' RETURNING *`;
+
+    client.query(query)
+      .then((dbResult) => {
+        if (!dbResult.rows[0]) {
+          return response.status(200).json({
+            status: 200,
+            error: 'User not found',
+          });
+        }
+        const currentToken = generateToken({ id: dbResult.rows[0].id, isadmin: dbResult.rows[0].is_admin });
+        process.env.CURRENT_TOKEN = currentToken;
+        return UsersController.updateUserPasswordSuccess(response, dbResult, currentToken);
+      })
+      .catch();
+  }
+
+  /**
+   *  Return update user password response
+   *  @param {Object} response
+   *  @param {Object} dbResult
+   *  @return {Object} json
+   *
+  */
+  static updateUserPasswordSuccess(response, dbResult, currentToken) {
+    return response.status(202).json({
+      status: 202,
+      data: {
+        id: dbResult.rows[0].id,
+        firstName: dbResult.rows[0].first_name,
+        lastName: dbResult.rows[0].last_name,
+        token: currentToken,
+      },
+    });
   }
 }
 export default UsersController;

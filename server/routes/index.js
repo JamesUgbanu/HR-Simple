@@ -21,7 +21,8 @@ const routes = (app) => {
     check('email')
       .isEmail().withMessage('Enter a valid email')
   ], validation.validatorError, validation.checkDuplicateEmail, UsersController.addUser);
-  app.get('/register/confirm/:token', UsersController.confirmUser);
+  app.get('/api/v1/register/confirm/:token', UsersController.confirmUser);
+  app.put('/api/v1/user/:email/password', UsersController.updateUserPassword);
 };
 
 export default routes;
