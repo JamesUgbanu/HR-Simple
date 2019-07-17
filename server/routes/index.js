@@ -21,7 +21,13 @@ const routes = (app) => {
     check('email')
       .isEmail().withMessage('Enter a valid email')
   ], validation.validatorError, validation.checkDuplicateEmail, UsersController.addUser);
-  app.get('/register/confirm/:token', UsersController.confirmUser);
+  app.get('/api/v1/register/confirm/:token', UsersController.confirmUser);
+  app.put('/api/v1/user/:email/password', [
+    check('password')
+      .not().isIn(['123', 'password', 'god']).withMessage('Do not use a common word as the password')
+      .isLength({ min: 5 }).withMessage('The password must be 5+ chars long')
+      .matches(/\d/).withMessage('The password must contain a number')
+  ], validation.validatorError, UsersController.updateUserPassword);
 };
 
 export default routes;
