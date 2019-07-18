@@ -2,7 +2,7 @@ import { check } from 'express-validator';
 import UsersController from '../controller/UsersController';
 import validation from '../middleware/validator';
 
-const userRoutes = (app) => {
+const routes = (app) => {
   app.get('/', (request, response) => response.status(200).send({ message: 'Welcome to HR Simple Application' }));
   app.post('/api/v1/auth/addUser', [
     check('firstName').not().isEmpty().withMessage('first Name is required').isLength({ min: 3 })
@@ -25,4 +25,4 @@ const userRoutes = (app) => {
   ], validation.validatorError, UsersController.signIn);
 };
 
-export default userRoutes;
+export default routes;
