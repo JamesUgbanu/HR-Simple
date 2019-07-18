@@ -7,20 +7,19 @@ const { expect } = chai;
 chai.use(chaiHttp);
 const addUserURL = '/api/v1/auth/addUser';
 const loginURL = '/api/v1/auth/signIn';
-let currrentToken;
+let adminToken; let userToken;
 
 describe('USER CONTROLLER ', () => {
   describe('POST /api/v1/auth/addUser', () => {
     before((done) => {
       chai.request(app)
-        .post(`${addUserURL}`)
+        .post(`${loginURL}`)
         .send({
-          firstName: 'James',
-          lastName: 'Joseph',
-          email: 'singlecliq@gmail.com'
+          email: 'jamesugbanu@gmail.com',
+          password: 'scrip#9ju',
         })
         .end((error, response) => {
-          currrentToken = response.body.data.token;
+          adminToken = response.body.data.token;
           done();
         });
     });
@@ -40,14 +39,39 @@ describe('USER CONTROLLER ', () => {
       chai.request(app)
         .post(`${addUserURL}`)
         .send(testData.newUsers[0])
+        .set('token', adminToken)
         .end((error, response) => {
           expect(response).to.have.status(201);
           expect(response.body).to.be.an('object');
           expect(response.body.data.email).to.equal(testData.newUsers[0].email);
+          userToken = response.body.data.token;
           done();
         });
     });
-
+    it('it should not register a user with incorrect or empty token', (done) => {
+      chai.request(app)
+        .post(`${addUserURL}`)
+        .send(testData.newUsers[0])
+        .set('token', '')
+        .end((error, response) => {
+          expect(response).to.have.status(401);
+          expect(response.body).to.be.an('object');
+          expect(response.body.error).to.equal('not authenticated');
+          done();
+        });
+    });
+    it('it should not register a user without an admin token', (done) => {
+      chai.request(app)
+        .post(`${addUserURL}`)
+        .send(testData.newUsers[0])
+        .set('token', userToken)
+        .end((error, response) => {
+          expect(response).to.have.status(403);
+          expect(response.body).to.be.an('object');
+          expect(response.body.error).to.equal('unAuthorised user');
+          done();
+        });
+    });
     it('it should not register a user with an empty first name field', (done) => {
       chai.request(app)
         .post(`${addUserURL}`)
@@ -56,6 +80,7 @@ describe('USER CONTROLLER ', () => {
           lastName: 'Doe',
           email: 'johndoe@gmail.com'
         })
+        .set('token', adminToken)
         .end((error, response) => {
           expect(response).to.have.status(400);
           expect(response.body).to.be.an('object');
@@ -72,6 +97,7 @@ describe('USER CONTROLLER ', () => {
           lastName: 'Doe',
           email: 'johndoe@gmail.com',
         })
+        .set('token', adminToken)
         .end((error, response) => {
           expect(response).to.have.status(400);
           expect(response.body).to.be.an('object');
@@ -88,6 +114,7 @@ describe('USER CONTROLLER ', () => {
           lastName: 'Doe',
           email: 'johndoe@gmail.com',
         })
+        .set('token', adminToken)
         .end((error, response) => {
           expect(response).to.have.status(400);
           expect(response.body).to.be.an('object');
@@ -104,6 +131,7 @@ describe('USER CONTROLLER ', () => {
           lastName: '',
           email: 'johndoe@gmail.com',
         })
+        .set('token', adminToken)
         .end((error, response) => {
           expect(response).to.have.status(400);
           expect(response.body).to.be.an('object');
@@ -120,6 +148,7 @@ describe('USER CONTROLLER ', () => {
           lastName: 'D',
           email: 'johndoe@gm.com',
         })
+        .set('token', adminToken)
         .end((error, response) => {
           expect(response).to.have.status(400);
           expect(response.body).to.be.an('object');
@@ -136,6 +165,7 @@ describe('USER CONTROLLER ', () => {
           lastName: 'D1#E',
           email: 'johndoe@gmail.com',
         })
+        .set('token', adminToken)
         .end((error, response) => {
           expect(response).to.have.status(400);
           expect(response.body).to.be.an('object');
@@ -148,6 +178,7 @@ describe('USER CONTROLLER ', () => {
       chai.request(app)
         .post(`${addUserURL}`)
         .send(testData.newUsers[0])
+        .set('token', adminToken)
         .end((error, response) => {
           expect(response).to.have.status(400);
           expect(response.body).to.be.an('object');
@@ -165,6 +196,7 @@ describe('USER CONTROLLER ', () => {
           email: 'johndoe@gmail',
           password: 'test24',
         })
+        .set('token', adminToken)
         .end((error, response) => {
           expect(response).to.have.status(400);
           expect(response.body).to.be.an('object');
@@ -176,7 +208,7 @@ describe('USER CONTROLLER ', () => {
   describe('GET /register/confirm/:token endpoint', () => {
     it('it should return the specific user email', (done) => {
       chai.request(app)
-        .get(`/api/v1/register/confirm/${currrentToken}`)
+        .get(`/api/v1/register/confirm/${userToken}`)
         .end((error, response) => {
           expect(response).to.have.status(200);
           expect(response.body).to.be.an('object');

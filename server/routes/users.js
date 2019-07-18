@@ -1,10 +1,11 @@
 import { check } from 'express-validator';
 import UsersController from '../controller/UsersController';
 import validation from '../middleware/validator';
+import userAuthenticate from '../middleware/userAuthenticate';
 
 const routes = (app) => {
   app.get('/', (request, response) => response.status(200).send({ message: 'Welcome to HR Simple Application' }));
-  app.post('/api/v1/auth/addUser', [
+  app.post('/api/v1/auth/addUser', userAuthenticate.authenticateAdmin, [
     check('firstName').not().isEmpty().withMessage('first Name is required').isLength({ min: 3 })
       .withMessage('first name should be atleast 3 characters')
       .isAlpha().withMessage('first name should only contain alphabet'),

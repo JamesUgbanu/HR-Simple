@@ -89,5 +89,22 @@ describe('TASK CONTROLLER ', () => {
           done();
         });
     });
+    it('it should not add a new task when a invalid or empty token is set', (done) => {
+      chai.request(app)
+        .post('/api/v1/task')
+        .send({
+          taskName: 'Update website',
+          dueDate: '2019-07-20 13:12:29',
+          description: 'Remove content from header and place it below',
+          assignee: 2,
+        })
+        .set('token', '')
+        .end((error, response) => {
+          expect(response).to.have.status(401);
+          expect(response.body).to.be.an('object');
+          expect(response.body.error).to.equal('not authenticated');
+          done();
+        });
+    });
   });
 });
