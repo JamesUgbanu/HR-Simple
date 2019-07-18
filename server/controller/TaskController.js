@@ -6,6 +6,7 @@ import config from '../config/config';
 const { secretKey } = config;
 const client = conn();
 client.connect();
+const taskNotFound = 'No task found';
 class TaskController {
   /**
        *  Create a new Task
@@ -60,6 +61,86 @@ class TaskController {
         });
       })
       .catch();
+  }
+
+  /**
+   *  User change Task Status
+   *  @param {Object} request
+   *  @param {Object} response
+   *  @return {Object} json
+   */
+
+  static updateTaskStatus(request, response) {
+    const { id } = request.params;
+    const { status } = request.body;
+
+    const query = `UPDATE tasks set status = '${status}' WHERE
+    id=${id} RETURNING *`;
+
+    client.query(query)
+      .then((dbResult) => {
+        if (!dbResult.rows[0]) {
+          return response.status(200).json({
+            status: 200,
+            error: taskNotFound,
+          });
+        }
+        return TaskController.updateTaskSuccess(response, dbResult);
+      })
+      .catch();
+  }
+
+  /**
+   *  Return update task status response
+   *  @param {Object} response
+   *  @param {Object} dbResult
+   *  @return {Object} json
+   *
+  */
+  static updateTaskSuccess(response, dbResult) {
+    return response.status(202).json({
+      status: 202,
+      data: {
+        id: dbResult.rows[0].id,
+        status: dbResult.rows[0].status,
+      },
+    });
+  }
+
+  /**
+   *  Return all tasks response
+   *  @param {Object} response
+   *  @return {Object} json
+   *
+   */
+  static getAllTasks(request, response) {
+    const query = 'SELECT * FROM tasks';
+
+    client.query(query)
+      .then((dbResult) => {
+        if (!dbResult.rows[0]) {
+          return response.status(200).json({
+            status: 200,
+            error: taskNotFound,
+          });
+        }
+        TaskController.getTaskSuccess(response, dbResult);
+      })
+      .catch();
+  }
+
+  /**
+   *  Return task response
+   *  @param {Object} response
+   *  @param {Object} dbResult
+   *  @return {Object} json
+   *
+   */
+  static getTaskSuccess(response, dbResult) {
+    return response.status(200).json({
+      status: 200,
+      data: dbResult.rows,
+    });
   }
 }
 export default TaskController;
