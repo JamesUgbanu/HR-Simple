@@ -9,6 +9,7 @@ const routes = (app) => {
     check('description').not().isEmpty().withMessage('Description is required'),
     check('assignee').not().isEmpty().withMessage('Assignee is required')
   ], validation.validatorError, TaskController.createTask);
+  app.put('/api/v1/task/:id/status', TaskController.updateTaskStatus);
 };
 
 export default routes;

@@ -18,7 +18,7 @@ const createUserTable = `
 
 const createTaskTable = `
   CREATE TABLE IF NOT EXISTS tasks(
-    id UUID NOT NULL DEFAULT uuid_generate_v1(),
+    id UUID NOT NULL DEFAULT uuid_generate_v4(),
     user_id INTEGER REFERENCES users(id) NOT NULL,
     task_name VARCHAR(50) NOT NULL,
     due_date TIMESTAMP WITH TIME ZONE,
@@ -26,7 +26,6 @@ const createTaskTable = `
     assignee INTEGER REFERENCES users(id) NOT NULL,
     task_type VARCHAR(40),
     completed_date TIMESTAMP WITH TIME ZONE,
-    completed_by INTEGER REFERENCES users(id),
     status VARCHAR(10) DEFAULT 'open',
     created_on TIMESTAMP WITH TIME ZONE DEFAULT now()
   );

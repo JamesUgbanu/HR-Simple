@@ -61,5 +61,49 @@ class TaskController {
       })
       .catch();
   }
+
+  /**
+   *  User change Task Status
+   *  @param {Object} request
+   *  @param {Object} response
+   *  @return {Object} json
+   */
+
+  static updateTaskStatus(request, response) {
+    const { id } = request.params;
+    const { status } = request.body;
+
+    const query = `UPDATE tasks set status = '${status}' WHERE
+    id=${id} RETURNING *`;
+
+    client.query(query)
+      .then((dbResult) => {
+        if (!dbResult.rows[0]) {
+          return response.status(200).json({
+            status: 200,
+            error: 'No task found',
+          });
+        }
+        return TaskController.updateTaskSuccess(response, dbResult);
+      })
+      .catch();
+  }
+
+  /**
+   *  Return update task status response
+   *  @param {Object} response
+   *  @param {Object} dbResult
+   *  @return {Object} json
+   *
+  */
+  static updateTaskSuccess(response, dbResult) {
+    return response.status(202).json({
+      status: 202,
+      data: {
+        id: dbResult.rows[0].id,
+        status: dbResult.rows[0].status,
+      },
+    });
+  }
 }
 export default TaskController;
