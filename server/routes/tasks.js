@@ -10,6 +10,7 @@ const routes = (app) => {
     check('assignee').not().isEmpty().withMessage('Assignee is required')
   ], validation.validatorError, TaskController.createTask);
   app.put('/api/v1/task/:id/status', TaskController.updateTaskStatus);
+  app.get('/api/v1/tasks', userAuthenticate.authenticateAdmin, TaskController.getAllTasks);
 };
 
 export default routes;

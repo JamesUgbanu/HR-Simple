@@ -21,6 +21,18 @@ describe('TASK CONTROLLER ', () => {
           done();
         });
     });
+    it('it should add return no task found', (done) => {
+      chai.request(app)
+        .get('/api/v1/tasks')
+        .set('token', currrentToken)
+        .end((error, response) => {
+          console.log(response.body);
+          expect(response).to.have.status(200);
+          expect(response.body).to.be.an('object');
+          expect(response.body.error).to.equal('No task found');
+          done();
+        });
+    });
     it('it should add a new task with correct and complete information', (done) => {
       chai.request(app)
         .post('/api/v1/task')
@@ -103,6 +115,18 @@ describe('TASK CONTROLLER ', () => {
           expect(response).to.have.status(401);
           expect(response.body).to.be.an('object');
           expect(response.body.error).to.equal('not authenticated');
+          done();
+        });
+    });
+  });
+  describe('GET /api/v1/tasks endpoint', () => {
+    it('it should return all tasks', (done) => {
+      chai.request(app)
+        .get('/api/v1/tasks')
+        .set('token', currrentToken)
+        .end((error, response) => {
+          expect(response).to.have.status(200);
+          expect(response.body).to.be.an('object');
           done();
         });
     });
