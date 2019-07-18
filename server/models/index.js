@@ -10,8 +10,10 @@ const adminPassword = password.hashPassword('scrip#9ju');
 
 const adminQuery = `INSERT INTO users(first_name, last_name, email, password, is_admin) VALUES 
 ('james', 'Ugbanu', 'jamesugbanu@gmail.com', '${adminPassword}', true) RETURNING *;`;
+const userQuery = `INSERT INTO users(first_name, last_name, email, password, is_admin) VALUES 
+('james', 'Ugbanu', 'jamesugbanu2@gmail.com', '${adminPassword}', false) RETURNING *;`;
 
-const dbQueries = `${destroyQuery}${createQuery}${adminQuery}`;
+const dbQueries = `${destroyQuery}${createQuery}${adminQuery}${userQuery}`;
 
 client.query(dbQueries, (err, res) => {
   client.end();

@@ -43,7 +43,7 @@ class UsersController {
   static addUserQuery(request, response, query) {
     client.query(query)
       .then((dbResult) => {
-        const currentToken = generateToken({ id: dbResult.rows[0].id, email: dbResult.rows[0].email });
+        const currentToken = generateToken({ id: dbResult.rows[0].id, email: dbResult.rows[0].email, isadmin: dbResult.rows[0].is_admin });
         const msg = {
           from: 'hr@lonadek.com',
           to: dbResult.rows[0].email,
