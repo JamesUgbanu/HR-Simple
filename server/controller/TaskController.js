@@ -76,13 +76,7 @@ class TaskController {
     const msg = 'Task Status Updated successfully';
     const query = `UPDATE tasks set status = '${status}' WHERE
     id='${id}' RETURNING *`;
-
-    client.query(query)
-      .then((dbResult) => {
-        TaskController.notFoundError(dbResult, response);
-        return TaskController.updateTaskSuccess(response, dbResult, msg);
-      })
-      .catch(e => response.status(500).json({ status: 500, error: 'Server error' }));
+    TaskController.queryDb(query, response, msg);
   }
 
   /**
@@ -114,7 +108,16 @@ class TaskController {
     const msg = 'Task completed successfully';
     const query = `UPDATE tasks set note = '${note}', completed_date = to_timestamp(${Date.now()} / 1000.0) WHERE
     id='${id}' RETURNING *`;
+    TaskController.queryDb(query, response, msg);
+  }
 
+  /**
+   *  query function
+   *  @param {Object} request
+   *  @param {Object} response
+   *  @return {Object} json
+   */
+  static queryDb(query, response, msg) {
     client.query(query)
       .then((dbResult) => {
         TaskController.notFoundError(dbResult, response);
@@ -143,12 +146,7 @@ class TaskController {
 
     client.query(query)
       .then((dbResult) => {
-        if (!dbResult.rows[0]) {
-          return response.status(200).json({
-            status: 200,
-            error: taskNotFound,
-          });
-        }
+        TaskController.notFoundError(dbResult, response);
         TaskController.getTaskSuccess(response, dbResult);
       })
       .catch();
