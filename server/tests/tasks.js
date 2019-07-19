@@ -27,7 +27,6 @@ describe('TASK CONTROLLER ', () => {
         .get('/api/v1/tasks')
         .set('token', currrentToken)
         .end((error, response) => {
-
           expect(response).to.have.status(200);
           expect(response.body).to.be.an('object');
           expect(response.body.error).to.equal('No task found');
@@ -159,7 +158,7 @@ describe('TASK CONTROLLER ', () => {
           expect(response).to.have.status(202);
           expect(response.body).to.be.an('object');
           expect(response.body).to.have.property('data');
-          expect(response.body.data.status).to.equal('ongoing');
+          expect(response.body.data.success).to.equal('Task Status Updated successfully');
           done();
         });
     });
@@ -182,6 +181,51 @@ describe('TASK CONTROLLER ', () => {
         .put(`/api/v1/task/'dhjhjsjkhjdf88999'/status`)
         .send({
           status: 'ongoing',
+        })
+        .set('token', currrentToken)
+        .end((error, response) => {
+          expect(response).to.have.status(500);
+          expect(response.body).to.be.an('object');
+          expect(response.body.error).to.equal('Server error');
+          done();
+        });
+    });
+  });
+  describe('PUT /task/:id/completed endpoint', () => {
+    it('it should update the date of a task when correct note is supplied', (done) => {
+      chai.request(app)
+        .put(`/api/v1/task/${taskId}/completed`)
+        .send({
+          note: 'I have done the project',
+        })
+        .set('token', currrentToken)
+        .end((error, response) => {
+          expect(response).to.have.status(202);
+          expect(response.body).to.be.an('object');
+          expect(response.body).to.have.property('data');
+          expect(response.body.data.success).to.equal('Task completed successfully');
+          done();
+        });
+    });
+    it('it should not update completed date of a task when note is empty', (done) => {
+      chai.request(app)
+        .put(`/api/v1/task/${taskId}/completed`)
+        .send({
+          note: '',
+        })
+        .set('token', currrentToken)
+        .end((error, response) => {
+          expect(response).to.have.status(400);
+          expect(response.body).to.be.an('object');
+          expect(response.body.errors[0].msg).to.equal('Note is required');
+          done();
+        });
+    });
+    it('it should not update the completed date of a task when wrong task id is supplied', (done) => {
+      chai.request(app)
+        .put(`/api/v1/task/'dhjhjsjkhjdf88999'/completed`)
+        .send({
+          note: 'I have done the project',
         })
         .set('token', currrentToken)
         .end((error, response) => {

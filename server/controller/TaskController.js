@@ -79,13 +79,8 @@ class TaskController {
 
     client.query(query)
       .then((dbResult) => {
-        if (!dbResult.rows[0]) {
-          return response.status(200).json({
-            status: 200,
-            error: taskNotFound,
-          });
-        }
-        return TaskController.updateTaskSuccess(response, dbResult);
+        TaskController.notFoundError(dbResult, response);
+        return TaskController.updateTaskStatusSuccess(response, dbResult);
       })
       .catch(e => response.status(500).json({ status: 500, error: 'Server error' }));
   }
@@ -97,14 +92,61 @@ class TaskController {
    *  @return {Object} json
    *
   */
-  static updateTaskSuccess(response, dbResult) {
+  static updateTaskStatusSuccess(response, dbResult) {
     return response.status(202).json({
       status: 202,
       data: {
         id: dbResult.rows[0].id,
-        status: dbResult.rows[0].status,
+        success: 'Task Status Updated successfully',
       },
     });
+  }
+  /**
+   *  User update completed date
+   *  @param {Object} request
+   *  @param {Object} response
+   *  @return {Object} json
+   */
+
+  static updateTaskCompleted(request, response) {
+    const { id } = request.params;
+    const { note } = request.body;
+
+    const query = `UPDATE tasks set note = '${note}', completed_date = to_timestamp(${Date.now()} / 1000.0) WHERE
+    id='${id}' RETURNING *`;
+
+    client.query(query)
+      .then((dbResult) => {
+        TaskController.notFoundError(dbResult, response);
+        return TaskController.updateTaskCompletedSuccess(response, dbResult);
+      })
+      .catch(e => response.status(500).json({ status: 500, error: 'Server error' }));
+  }
+
+  /**
+   *  Return update complete task response
+   *  @param {Object} response
+   *  @param {Object} dbResult
+   *  @return {Object} json
+   *
+  */
+  static updateTaskCompletedSuccess(response, dbResult) {
+    return response.status(202).json({
+      status: 202,
+      data: {
+        id: dbResult.rows[0].id,
+        success: 'Task completed successfully',
+      },
+    });
+  }
+
+  static notFoundError(dbResult, response) {
+    if (!dbResult.rows[0]) {
+      return response.status(200).json({
+        status: 200,
+        error: taskNotFound,
+      });
+    }
   }
 
   /**

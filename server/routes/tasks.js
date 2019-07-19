@@ -14,6 +14,9 @@ const routes = (app) => {
       .matches(/(ongoing|completed)$/).withMessage('Status should be either ongoing or completed')
   ], validation.validatorError, TaskController.updateTaskStatus);
   app.get('/api/v1/tasks', userAuthenticate.authenticateAdmin, TaskController.getAllTasks);
+  app.put('/api/v1/task/:id/completed', userAuthenticate.authenticateUser, [
+    check('note').not().isEmpty().withMessage('Note is required')
+  ], validation.validatorError, TaskController.updateTaskCompleted);
 };
 
 export default routes;
