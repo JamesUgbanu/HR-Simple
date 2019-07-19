@@ -9,9 +9,9 @@ const routes = (app) => {
     check('description').not().isEmpty().withMessage('Description is required'),
     check('assignee').not().isEmpty().withMessage('Assignee is required')
   ], validation.validatorError, TaskController.createTask);
-  app.put('/api/v1/task/:id/status', [
+  app.put('/api/v1/task/:id/status', userAuthenticate.authenticateUser, [
     check('status')
-    .matches(/(ongoing|completed)$/).withMessage('Status should be either ongoing or completed')
+      .matches(/(ongoing|completed)$/).withMessage('Status should be either ongoing or completed')
   ], validation.validatorError, TaskController.updateTaskStatus);
   app.get('/api/v1/tasks', userAuthenticate.authenticateAdmin, TaskController.getAllTasks);
 };
