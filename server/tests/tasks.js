@@ -146,6 +146,18 @@ describe('TASK CONTROLLER ', () => {
         });
     });
   });
+  describe('GET /api/v1/task/:id endpoint', () => {
+    it('it should return task by id on params', (done) => {
+      chai.request(app)
+        .get(`/api/v1/task/${taskId}`)
+        .set('token', currrentToken)
+        .end((error, response) => {
+          expect(response).to.have.status(200);
+          expect(response.body).to.be.an('object');
+          done();
+        });
+    });
+  });
   describe('PUT /task/:id/status endpoint', () => {
     it('it should update the status of a task when correct status is supplied', (done) => {
       chai.request(app)
