@@ -73,14 +73,14 @@ class TaskController {
   static updateTaskStatus(request, response) {
     const { id } = request.params;
     const { status } = request.body;
-
+    const msg = 'Task Status Updated successfully';
     const query = `UPDATE tasks set status = '${status}' WHERE
     id='${id}' RETURNING *`;
 
     client.query(query)
       .then((dbResult) => {
         TaskController.notFoundError(dbResult, response);
-        return TaskController.updateTaskStatusSuccess(response, dbResult);
+        return TaskController.updateTaskSuccess(response, dbResult, msg);
       })
       .catch(e => response.status(500).json({ status: 500, error: 'Server error' }));
   }
@@ -92,12 +92,12 @@ class TaskController {
    *  @return {Object} json
    *
   */
-  static updateTaskStatusSuccess(response, dbResult) {
+  static updateTaskSuccess(response, dbResult, msg) {
     return response.status(202).json({
       status: 202,
       data: {
         id: dbResult.rows[0].id,
-        success: 'Task Status Updated successfully',
+        success: msg,
       },
     });
   }
@@ -111,33 +111,16 @@ class TaskController {
   static updateTaskCompleted(request, response) {
     const { id } = request.params;
     const { note } = request.body;
-
+    const msg = 'Task completed successfully';
     const query = `UPDATE tasks set note = '${note}', completed_date = to_timestamp(${Date.now()} / 1000.0) WHERE
     id='${id}' RETURNING *`;
 
     client.query(query)
       .then((dbResult) => {
         TaskController.notFoundError(dbResult, response);
-        return TaskController.updateTaskCompletedSuccess(response, dbResult);
+        return TaskController.updateTaskSuccess(response, dbResult, msg);
       })
       .catch(e => response.status(500).json({ status: 500, error: 'Server error' }));
-  }
-
-  /**
-   *  Return update complete task response
-   *  @param {Object} response
-   *  @param {Object} dbResult
-   *  @return {Object} json
-   *
-  */
-  static updateTaskCompletedSuccess(response, dbResult) {
-    return response.status(202).json({
-      status: 202,
-      data: {
-        id: dbResult.rows[0].id,
-        success: 'Task completed successfully',
-      },
-    });
   }
 
   static notFoundError(dbResult, response) {
