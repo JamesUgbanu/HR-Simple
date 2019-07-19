@@ -75,7 +75,7 @@ class TaskController {
     const { status } = request.body;
 
     const query = `UPDATE tasks set status = '${status}' WHERE
-    id=${id} RETURNING *`;
+    id='${id}' RETURNING *`;
 
     client.query(query)
       .then((dbResult) => {
@@ -87,7 +87,7 @@ class TaskController {
         }
         return TaskController.updateTaskSuccess(response, dbResult);
       })
-      .catch();
+      .catch(e => response.status(500).json({ status: 500, error: 'Server error' }));
   }
 
   /**
