@@ -23,6 +23,7 @@ const createTaskTable = `
     task_name VARCHAR(50) NOT NULL,
     due_date TIMESTAMP WITH TIME ZONE,
     description TEXT,
+    note TEXT,
     assignee INTEGER REFERENCES users(id) NOT NULL,
     task_type VARCHAR(40),
     completed_date TIMESTAMP WITH TIME ZONE,
