@@ -6,6 +6,7 @@ const { expect } = chai;
 chai.use(chaiHttp);
 const loginURL = '/api/v1/auth/signIn';
 let currrentToken;
+let taskId;
 
 describe('TASK CONTROLLER ', () => {
   describe('POST /api/v1/task', () => {
@@ -26,7 +27,21 @@ describe('TASK CONTROLLER ', () => {
         .get('/api/v1/tasks')
         .set('token', currrentToken)
         .end((error, response) => {
-          console.log(response.body);
+
+          expect(response).to.have.status(200);
+          expect(response.body).to.be.an('object');
+          expect(response.body.error).to.equal('No task found');
+          done();
+        });
+    });
+    it('it should add return no task found when user want to update', (done) => {
+      chai.request(app)
+        .put('/api/v1/task/15669920-5258-45fc-8eb3-05b3353c8af9/status')
+        .send({
+          status: 'ongoing',
+        })
+        .set('token', currrentToken)
+        .end((error, response) => {
           expect(response).to.have.status(200);
           expect(response.body).to.be.an('object');
           expect(response.body.error).to.equal('No task found');
@@ -127,6 +142,52 @@ describe('TASK CONTROLLER ', () => {
         .end((error, response) => {
           expect(response).to.have.status(200);
           expect(response.body).to.be.an('object');
+          taskId = response.body.data[0].id;
+          done();
+        });
+    });
+  });
+  describe('PUT /task/:id/status endpoint', () => {
+    it('it should update the status of a task when correct status is supplied', (done) => {
+      chai.request(app)
+        .put(`/api/v1/task/${taskId}/status`)
+        .send({
+          status: 'ongoing',
+        })
+        .set('token', currrentToken)
+        .end((error, response) => {
+          expect(response).to.have.status(202);
+          expect(response.body).to.be.an('object');
+          expect(response.body).to.have.property('data');
+          expect(response.body.data.status).to.equal('ongoing');
+          done();
+        });
+    });
+    it('it should not update the status of a task when wrong status is supplied', (done) => {
+      chai.request(app)
+        .put(`/api/v1/task/${taskId}/status`)
+        .send({
+          status: 'on-going',
+        })
+        .set('token', currrentToken)
+        .end((error, response) => {
+          expect(response).to.have.status(400);
+          expect(response.body).to.be.an('object');
+          expect(response.body.errors[0].msg).to.equal('Status should be either ongoing or completed');
+          done();
+        });
+    });
+    it('it should not update the status of a task when wrong task id is supplied', (done) => {
+      chai.request(app)
+        .put(`/api/v1/task/'dhjhjsjkhjdf88999'/status`)
+        .send({
+          status: 'ongoing',
+        })
+        .set('token', currrentToken)
+        .end((error, response) => {
+          expect(response).to.have.status(500);
+          expect(response.body).to.be.an('object');
+          expect(response.body.error).to.equal('Server error');
           done();
         });
     });
