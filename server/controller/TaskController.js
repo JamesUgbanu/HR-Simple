@@ -120,8 +120,12 @@ class TaskController {
   static queryDb(query, response, msg) {
     client.query(query)
       .then((dbResult) => {
+        if (msg) {
+          TaskController.notFoundError(dbResult, response);
+          return TaskController.updateTaskSuccess(response, dbResult, msg);
+        }
         TaskController.notFoundError(dbResult, response);
-        return TaskController.updateTaskSuccess(response, dbResult, msg);
+        TaskController.getTaskSuccess(response, dbResult);
       })
       .catch(e => response.status(500).json({ status: 500, error: 'Server error' }));
   }
@@ -144,12 +148,20 @@ class TaskController {
   static getAllTasks(request, response) {
     const query = 'SELECT * FROM tasks';
 
-    client.query(query)
-      .then((dbResult) => {
-        TaskController.notFoundError(dbResult, response);
-        TaskController.getTaskSuccess(response, dbResult);
-      })
-      .catch();
+    TaskController.queryDb(query, response);
+  }
+
+  /**
+   *  Return all tasks response
+   *  @param {Object} response
+   *  @return {Object} json
+   *
+   */
+  static getTaskById(request, response) {
+    const { id } = request.params;
+    const query = `SELECT * FROM tasks WHERE id = '${id}'`;
+
+    TaskController.queryDb(query, response);
   }
 
   /**
