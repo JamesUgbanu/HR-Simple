@@ -3,7 +3,7 @@ import { Redirect } from "react-router-dom";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import { login } from "../../actions/auth";
-
+import Spinner from "../layout/Spinner";
 // reactstrap components
 import {
   Button,
@@ -21,7 +21,7 @@ import {
   Container
 } from "reactstrap";
 
-const Login = ({ login, isAuthenticated }) => {
+const Login = ({ login, isAuthenticated, auth: { dataLoading } }) => {
     const [formData, setFormData] = useState({
         email: "",
         password: ""
@@ -42,6 +42,9 @@ const Login = ({ login, isAuthenticated }) => {
         return <Redirect to="/tasks/me" />;
       }
 
+      if(dataLoading) {
+        return <Spinner />
+      } else {
     return (
       <>
        <div className="main-content">
@@ -132,15 +135,17 @@ const Login = ({ login, isAuthenticated }) => {
         </div>
       </>
     );
-
+  }
 }
 
 Login.propTypes = {
     login: PropTypes.func.isRequired,
-    isAuthenticated: PropTypes.bool
+    isAuthenticated: PropTypes.bool,
+    auth: PropTypes.object.isRequired
   };
   const mapStateToProps = state => ({
-    isAuthenticated: state.auth.isAuthenticated
+    isAuthenticated: state.auth.isAuthenticated,
+    auth: state.auth
   });
   export default connect(
     mapStateToProps,

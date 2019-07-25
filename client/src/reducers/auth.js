@@ -5,15 +5,15 @@ import {
     USER_LOADED,
     AUTH_ERROR,
     GET_USERS,
-    USERS_ERROR
+    USERS_ERROR,
+    START_FETCH
   } from "../actions/types";
   
   const initialState = {
     token: localStorage.getItem("token"),
     isAuthenticated: null,
     loading: true,
-    users: [],
-    brokerages: {}
+    users: []
   };
   
   export default function(state = initialState, action) {
@@ -27,13 +27,19 @@ import {
           loading: false,
           user: payload
         };
+      case START_FETCH:
+      return {
+        ...state,
+        dataLoading: true
+      }
       case LOGIN_SUCCESS:
         localStorage.setItem("token", payload.token);
         return {
           ...state,
           ...payload,
           isAuthenticated: true,
-          loading: false
+          loading: false,
+          dataLoading: false
         };
       case GET_USERS:
         return {
@@ -48,7 +54,8 @@ import {
           ...state,
           token: null,
           isAuthenticated: false,
-          loading: false
+          loading: false,
+          dataLoading: false
         };
       case USERS_ERROR:
         return {

@@ -13212,3 +13212,11 @@ button:focus, :focus {
 
 .table .badge i {
   margin-right: 10px; }
+
+  .spinner__content {
+   position: fixed; 
+   top: 40%;
+   left: 40%;
+   width: 200px;
+    pointer-events:none;
+}
