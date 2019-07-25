@@ -1,9 +1,7 @@
-import jwt from 'jsonwebtoken';
 import conn from '../helpers/conn';
 import transport from '../helpers/mailTransporter';
-import config from '../config/config';
 
-const { secretKey } = config;
+
 const client = conn();
 client.connect();
 const taskNotFound = 'No task found';
@@ -21,8 +19,7 @@ class TaskController {
       description,
       assignee,
     } = request.body;
-    const verifiedToken = jwt.verify(request.headers.token, secretKey);
-    const { id } = verifiedToken.user;
+    const { id } = request.token.user;
 
     const query = {
       text: 'INSERT INTO tasks(user_id, task_name, due_date, description, assignee) VALUES ($1, $2, $3, $4, $5) RETURNING *',
@@ -120,23 +117,22 @@ class TaskController {
   static queryDb(query, response, msg) {
     client.query(query)
       .then((dbResult) => {
+        if (dbResult.rowCount === 0) {
+          return TaskController.notFoundError(response);
+        }
         if (msg) {
-          TaskController.notFoundError(dbResult, response);
           return TaskController.updateTaskSuccess(response, dbResult, msg);
         }
-        TaskController.notFoundError(dbResult, response);
         TaskController.getTaskSuccess(response, dbResult);
       })
       .catch(e => response.status(500).json({ status: 500, error: 'Server error' }));
   }
 
-  static notFoundError(dbResult, response) {
-    if (!dbResult.rows[0]) {
-      return response.status(200).json({
-        status: 200,
-        error: taskNotFound,
-      });
-    }
+  static notFoundError(response) {
+    return response.status(200).json({
+      status: 200,
+      error: taskNotFound,
+    });
   }
 
   /**
@@ -161,6 +157,22 @@ class TaskController {
     const { id } = request.params;
     const query = `SELECT * FROM tasks WHERE id = '${id}'`;
 
+    TaskController.queryDb(query, response);
+  }
+
+  /**
+   *  Return user tasks response
+   *  @param {Object} response
+   *  @return {Object} json
+   *
+   */
+  static getUserTasks(request, response) {
+    const { id } = request.params;
+
+    const query = `SELECT * FROM tasks WHERE assignee = '${parseInt(id)}'`;
+    if (request.token.user.id !== parseInt(id)) {
+      return response.status(401).json({ status: 401, error: 'You cannot access this resource' });
+    }
     TaskController.queryDb(query, response);
   }
 
