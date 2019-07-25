@@ -204,10 +204,7 @@ class UsersController {
    *
    */
   static getCurrentLoggedIn(request, response) {
-    const userToken = request.headers['x-access'] || request.headers.token;
-    const verifiedToken = jwt.verify(userToken, secretKey);
-    
-    const query = `SELECT * FROM users WHERE id = '${verifiedToken.user.id}'`;
+    const query = `SELECT * FROM users WHERE id = '${request.token.user.id}'`;
 
     UsersController.queryDb(query, response);
   }
