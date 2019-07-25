@@ -221,19 +221,9 @@ class UsersController {
   static queryDb(query, response) {
     client.query(query)
       .then((dbResult) => {
-        UsersController.notFoundError(dbResult, response);
         UsersController.getUserSuccess(response, dbResult.rows[0]);
       })
-      .catch(e => response.status(500).json({ status: 500, error: 'Server error' }));
-  }
-
-  static notFoundError(dbResult, response) {
-    if (!dbResult.rows[0]) {
-      return response.status(200).json({
-        status: 200,
-        error: 'User not found',
-      });
-    }
+      .catch();
   }
 
   /**
