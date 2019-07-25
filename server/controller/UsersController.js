@@ -196,5 +196,64 @@ class UsersController {
       },
     });
   }
+
+  /**
+   *  Return current loggedIn user response
+   *  @param {Object} response
+   *  @return {Object} json
+   *
+   */
+  static getCurrentLoggedIn(request, response) {
+    const userToken = request.headers['x-access'] || request.headers.token;
+    const verifiedToken = jwt.verify(userToken, secretKey);
+    
+    const query = `SELECT * FROM users WHERE id = '${verifiedToken.user.id}'`;
+
+    UsersController.queryDb(query, response);
+  }
+
+  /**
+   *  query function
+   *  @param {Object} request
+   *  @param {Object} response
+   *  @return {Object} json
+   */
+  static queryDb(query, response) {
+    client.query(query)
+      .then((dbResult) => {
+        UsersController.notFoundError(dbResult, response);
+        UsersController.getUserSuccess(response, dbResult.rows[0]);
+      })
+      .catch(e => response.status(500).json({ status: 500, error: 'Server error' }));
+  }
+
+  static notFoundError(dbResult, response) {
+    if (!dbResult.rows[0]) {
+      return response.status(200).json({
+        status: 200,
+        error: 'User not found',
+      });
+    }
+  }
+
+  /**
+   *  Return user response
+   *  @param {Object} response
+   *  @param {Object} dbResult
+   *  @return {Object} json
+   *
+   */
+  static getUserSuccess(response, dbResult) {
+    return response.status(200).json({
+      status: 200,
+      data: {
+        id: dbResult.id,
+        firstName: dbResult.first_name,
+        lastname: dbResult.last_name,
+        email: dbResult.email,
+        isAdmin: dbResult.is_admin
+      }
+    });
+  }
 }
 export default UsersController;
