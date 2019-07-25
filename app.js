@@ -18,19 +18,19 @@ app.use(bodyParser.json());
 
 // declare accepted cors URL
 // Set up a whitelist and check against it:
-const whitelist = ['http://localhost:3000', 'http://localhost:5000'];
-const corsOptions = {
-  origin (origin, callback) {
-    if (whitelist.indexOf(origin) !== -1) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  }
-};
+// const whitelist = ['http://localhost:3000', 'http://localhost:5000'];
+// const corsOptions = {
+//   origin (origin, callback) {
+//     if (whitelist.indexOf(origin) !== -1) {
+//       callback(null, true);
+//     } else {
+//       callback(new Error('Not allowed by CORS'));
+//     }
+//   }
+// };
 
 // Then pass them to cors:
-app.use(cors(corsOptions));
+app.use(cors());
 
 userRoutes(app);
 taskRoutes(app);
