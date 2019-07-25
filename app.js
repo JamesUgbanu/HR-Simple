@@ -1,6 +1,7 @@
 import Express from 'express';
 import bodyParser from 'body-parser';
 import dotenv from 'dotenv';
+import cors from 'cors';
 import userRoutes from './server/routes/users';
 import taskRoutes from './server/routes/tasks';
 
@@ -8,12 +9,28 @@ dotenv.config();
 
 // declare constants
 const app = new Express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 5000;
 
 app.use(bodyParser.urlencoded({
   extended: false,
 }));
 app.use(bodyParser.json());
+
+// declare accepted cors URL
+// Set up a whitelist and check against it:
+const whitelist = ['http://localhost:3000', 'http://localhost:5000'];
+const corsOptions = {
+  origin (origin, callback) {
+    if (whitelist.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  }
+};
+
+// Then pass them to cors:
+app.use(cors(corsOptions));
 
 userRoutes(app);
 taskRoutes(app);

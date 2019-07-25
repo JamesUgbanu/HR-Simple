@@ -1,4 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
+import { Redirect } from "react-router-dom";
+import { connect } from "react-redux";
+import PropTypes from "prop-types";
+import { login } from "../../actions/auth";
 
 // reactstrap components
 import {
@@ -17,8 +21,27 @@ import {
   Container
 } from "reactstrap";
 
-class Login extends React.Component {
-  render() {
+const Login = ({ login, isAuthenticated }) => {
+    const [formData, setFormData] = useState({
+        email: "",
+        password: ""
+      });
+    
+      const { email, password } = formData;
+    
+      const onChange = e =>
+        setFormData({ ...formData, [e.target.name]: e.target.value });
+    
+      const onSubmit = async e => {
+        e.preventDefault();
+        login(email, password);
+      };
+    
+      // Redirect if user is logged in
+      if (isAuthenticated) {
+        return <Redirect to="/tasks/me" />;
+      }
+
     return (
       <>
        <div className="main-content">
@@ -59,7 +82,7 @@ class Login extends React.Component {
             </CardHeader>
             <CardBody className="px-lg-5 py-lg-5">
 
-              <Form role="form">
+              <Form role="form" onSubmit={e => onSubmit(e)}>
                 <FormGroup className="mb-3">
                   <InputGroup className="input-group-alternative">
                     <InputGroupAddon addonType="prepend">
@@ -67,7 +90,14 @@ class Login extends React.Component {
                         <i className="ni ni-email-83" />
                       </InputGroupText>
                     </InputGroupAddon>
-                    <Input placeholder="Email" type="email" />
+                    <Input
+                    type="email"
+                    placeholder="Email Address"
+                    name="email"
+                    value={email}
+                    onChange={e => onChange(e)}
+                    required 
+                     />
                   </InputGroup>
                 </FormGroup>
                 <FormGroup>
@@ -77,11 +107,19 @@ class Login extends React.Component {
                         <i className="ni ni-lock-circle-open" />
                       </InputGroupText>
                     </InputGroupAddon>
-                    <Input placeholder="Password" type="password" />
+                    <Input 
+                    type="password"
+                    placeholder="Password"
+                    name="password"
+                    auto-complete="current-password"
+                    minLength="6"
+                    value={password}
+                    onChange={e => onChange(e)}
+                    />
                   </InputGroup>
                 </FormGroup>
                 <div className="text-center">
-                  <Button href="/dashboard" className="my-4" color="primary" type="button">
+                  <Button className="my-4" color="primary" type="submit">
                     Sign in
                   </Button>
                 </div>
@@ -94,7 +132,17 @@ class Login extends React.Component {
         </div>
       </>
     );
-  }
+
 }
 
-export default Login;
+Login.propTypes = {
+    login: PropTypes.func.isRequired,
+    isAuthenticated: PropTypes.bool
+  };
+  const mapStateToProps = state => ({
+    isAuthenticated: state.auth.isAuthenticated
+  });
+  export default connect(
+    mapStateToProps,
+    { login }
+  )(Login);

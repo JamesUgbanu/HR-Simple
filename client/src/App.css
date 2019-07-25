@@ -3735,7 +3735,10 @@ input[type="button"].btn-block {
   border-radius: 0; }
 
 .alert {
-  position: relative;
+  position: fixed;
+  width: 100%;
+  z-index: 100;
+  text-align: center;
   padding: 1rem 1.5rem;
   margin-bottom: 1rem;
   border: 1px solid transparent;
