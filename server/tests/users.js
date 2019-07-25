@@ -383,4 +383,16 @@ describe('USER CONTROLLER ', () => {
         });
     });
   });
+  describe('GET /api/v1/auth endpoint', () => {
+    it('it should return current loggedIn user', (done) => {
+      chai.request(app)
+        .get('/api/v1/auth')
+        .set('token', adminToken)
+        .end((error, response) => {
+          expect(response).to.have.status(200);
+          expect(response.body).to.be.an('object');
+          done();
+        });
+    });
+  });
 });

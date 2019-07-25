@@ -15,6 +15,7 @@ const routes = (app) => {
     check('email').isEmail().withMessage('Enter a valid email')
   ], validation.validatorError, validation.checkDuplicateEmail, UsersController.addUser);
   app.get('/api/v1/register/confirm/:token', UsersController.confirmUser);
+  app.get('/api/v1/auth', userAuthenticate.authenticateUser, UsersController.getCurrentLoggedIn);
   app.put('/api/v1/user/:email/password', [
     check('password').not().isIn(['123', 'password', 'god']).withMessage('Do not use a common word as the password')
       .isLength({ min: 5 }).withMessage('The password must be 5+ chars long')
