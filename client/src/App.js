@@ -39,7 +39,7 @@ return (
         <Route exact path="/users" component={UserTable} />
         <Route exact path="/tasks/me" component={TaskTable} />
         <Route exact path="/profile" component={Profile} />
-        <Route exact path="/task/me/:id" component={ShowTask} />
+        <Route exact path="/task/:id" component={ShowTask} />
       </Switch>
     </div>
   </Router>

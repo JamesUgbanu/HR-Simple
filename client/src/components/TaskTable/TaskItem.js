@@ -29,7 +29,7 @@ const UserTaskItem = ({
             </Badge>
         </td>
         <td className="text-left">
-        <Button href={`/tasks/me/${id}`} color="primary" type="button"> View</Button>
+        <Button href={`/tasks/${id}`} color="primary" type="button"> View</Button>
         </td>
         </tr>
         </tbody>
