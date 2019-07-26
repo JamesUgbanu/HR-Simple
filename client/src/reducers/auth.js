@@ -13,7 +13,8 @@ import {
     token: localStorage.getItem("token"),
     isAuthenticated: null,
     loading: true,
-    users: []
+    users: [],
+    user: {}
   };
   
   export default function(state = initialState, action) {
@@ -49,6 +50,13 @@ import {
           loading: false
         };
       case AUTH_ERROR:
+          localStorage.removeItem("token");
+          return {
+            ...state,
+            token: null,
+            isAuthenticated: false,
+            loading: false
+          };
       case LOGIN_FAIL:
         return {
           ...state,
