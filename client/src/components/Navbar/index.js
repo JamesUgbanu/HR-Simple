@@ -1,5 +1,7 @@
 import React from "react";
+import { connect } from "react-redux";
 import { Link } from "react-router-dom";
+import PropTypes from "prop-types";
 // reactstrap components
 import {
   DropdownMenu,
@@ -12,8 +14,9 @@ import {
   Media
 } from "reactstrap";
 
-class AdminNavbar extends React.Component {
-  render() {
+const Usernavbar = ({
+  auth: { user }
+}) => {
     return (
       <>
         <Navbar className="navbar-top navbar-dark" expand="md" id="navbar-main">
@@ -37,7 +40,7 @@ class AdminNavbar extends React.Component {
                     </span>
                     <Media className="ml-2 d-none d-lg-block">
                       <span className="mb-0 text-sm font-weight-bold">
-                        James Ugbanu
+                        { user ? user.firstName +" "+ user.lastname : null }
                       </span>
                     </Media>
                   </Media>
@@ -59,6 +62,14 @@ class AdminNavbar extends React.Component {
       </>
     );
   }
-}
 
-export default AdminNavbar;
+  Usernavbar.propTypes = {
+    auth: PropTypes.object.isRequired
+  };
+  const mapStateToProps = state => ({
+    auth: state.auth,
+  });
+  
+  export default connect(
+    mapStateToProps
+  )(Usernavbar);

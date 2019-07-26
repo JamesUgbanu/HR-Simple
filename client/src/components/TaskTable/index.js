@@ -1,12 +1,14 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { connect } from "react-redux";
+import { getUserTasks } from "../../actions/tasks";
+//import { loadUser } from "../../actions/auth";
+import PropTypes from "prop-types";
 
 // reactstrap components
 import {
-    Badge,
     Card,
     CardHeader,
     CardFooter,
-    Button,
     Pagination,
     PaginationItem,
     PaginationLink,
@@ -21,9 +23,18 @@ import {
 import Navbar from "../Navbar";
 import UserHeader from "../UserHeader";
 import Sidebar from "../Sidebar";
+import TaskItem from "./TaskItem";
+import Spinner from "../layout/Spinner";
 
-class Register extends React.Component {
-  render() {
+const UserTask = ({
+  getUserTasks,
+  auth: { user, loading },
+  tasks: { tasks }
+}) => {
+  useEffect(() => {
+    getUserTasks();
+  }, [getUserTasks]);
+   
     return (
       <>
        <Sidebar
@@ -33,7 +44,7 @@ class Register extends React.Component {
             imgAlt: "..."
           }}
         />
-        <div className="main-content" ref="mainContent">
+        <div className="main-content">
         <Navbar />
         <UserHeader />
         <Container className="mt--7" fluid>
@@ -78,10 +89,10 @@ class Register extends React.Component {
                           </DropdownMenu>
                         </UncontrolledDropdown>
                 </CardHeader>
+                { !tasks.data ? <Spinner /> :
                 <Table className="align-items-center table-flush" responsive>
                   <thead className="thead-light">
                     <tr>
-                      <th scope="col">Task ID</th>
                       <th scope="col">Assigned By</th>
                       <th scope="col">Assigned To</th>
                       <th scope="col">Assigned Date</th>
@@ -91,43 +102,17 @@ class Register extends React.Component {
                       <th scope="col">Action</th>
                     </tr>
                   </thead>
-                  <tbody>
-                    <tr>
-                      <td>78348899-877898-67hj</td>
-                      <td>James Ugbanu</td>
-                      <td>Joseph Osinachi</td>
-                      <td>22-08-2019</td>
-                      <td>27-08-2019</td>
-                      <td>29-08-2019</td>
-                      <td>
-                        <Badge color="" className="badge-dot mr-4">
-                          <i className="bg-success" />
-                          completed
-                        </Badge>
-                      </td>
-                      <td className="text-left">
-                      <Button href="/task" color="primary" type="button"> View</Button>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>78348899-877898-67hj</td>
-                      <td>James Ugbanu</td>
-                      <td>Joseph Osinachi</td>
-                      <td>22-08-2019</td>
-                      <td>29-08-2019</td>
-                      <td>30-08-2019</td>
-                      <td>
-                        <Badge color="" className="badge-dot mr-4">
-                          <i className="bg-danger" />
-                          late
-                        </Badge>
-                      </td>
-                      <td className="text-left">
-                      <Button href="/task" color="primary" type="button"> View</Button>
-                      </td>
-                    </tr>
-                  </tbody>
-                </Table>
+                    { tasks.data.length > 0 ? (
+              tasks.data.map(task => (
+                <TaskItem key={task.id} task={task} authUser={user} />
+              ))
+            ) : (
+              <tbody>
+              <tr style={{ textAlign: "right" }}>No Tasks Found!</tr>
+              </tbody>
+            )}
+            </Table>
+                }
                 <CardFooter className="py-4">
                   <nav aria-label="...">
                     <Pagination
@@ -188,6 +173,18 @@ class Register extends React.Component {
       </>
     );
   }
-}
 
-export default Register;
+  UserTask.propTypes = {
+    getUserTasks: PropTypes.func.isRequired,
+    auth: PropTypes.object.isRequired,
+    tasks: PropTypes.object
+  };
+  const mapStateToProps = state => ({
+    isAuthenticated: state.auth.isAuthenticated,
+    auth: state.auth,
+    tasks: state.task
+  });
+  export default connect(
+    mapStateToProps,
+    { getUserTasks }
+  )(UserTask);

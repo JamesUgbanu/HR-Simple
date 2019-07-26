@@ -3,8 +3,8 @@ import { setAlert } from "./alert";
 import {
   USER_LOADED,
   LOGIN_SUCCESS,
-  LOGIN_FAIL,
   LOGOUT,
+  LOGIN_FAIL,
   AUTH_ERROR,
   START_FETCH
 } from "./types";
@@ -17,11 +17,11 @@ export const loadUser = () => async dispatch => {
   }
 
   try {
-    const res = await axios.get("http://localhost:5000/api/v1/auth/signIn");
-
+    const res = await axios.get("http://localhost:5000/api/v1/auth");
+    
     dispatch({
       type: USER_LOADED,
-      payload: res.body
+      payload: res.data.data
     });
   } catch (err) {
     dispatch({
@@ -47,18 +47,18 @@ export const login = (email, password) => async dispatch => {
       payload: res.data.data
     });
 
-    //dispatch(loadUser());
+    dispatch(loadUser());
   } catch (err) {
-      
-    const errors = err.response.data;
-
-    if (errors) {
+    if (err.response) {
+      const errors = err.response.data;
     //   errors.forEach(error => dispatch(setAlert(error.msg, "danger")));
     dispatch(setAlert(errors.error, "danger"));
+    } else {
+      dispatch({
+        type: LOGIN_FAIL
+      });
+      dispatch(setAlert("Network Problem", "danger"));
     }
-    dispatch({
-      type: LOGIN_FAIL
-    });
   }
 };
 

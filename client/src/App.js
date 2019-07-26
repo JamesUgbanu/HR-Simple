@@ -6,7 +6,7 @@ import UserTable from './components/UserTable';
 import TaskTable from './components/TaskTable';
 import Profile from './components/Profile';
 import AddTask from './components/AddTask';
-import SingleTask from './components/SingleTask';
+import ShowTask from './components/Task/showTask';
 import Login from "./components/auth/Login";
 import Alert from "./components/layout/Alert";
 import "./assets/vendor/@fontawesome/css/all.min.css";
@@ -15,7 +15,7 @@ import './App.css';
 import { Provider } from "react-redux";
 import store from "./store";
 import setAuthToken from "./utils/setAuthToken";
-//import { loadUser } from "./actions/auth";
+import { loadUser } from "./actions/auth";
 
 if (localStorage.token) {
   setAuthToken(localStorage.token);
@@ -23,7 +23,7 @@ if (localStorage.token) {
 
 const App = () => {
   useEffect(() => {
-    //store.dispatch(loadUser());
+    store.dispatch(loadUser());
   }, []);
 
 return (
@@ -39,7 +39,7 @@ return (
         <Route exact path="/users" component={UserTable} />
         <Route exact path="/tasks/me" component={TaskTable} />
         <Route exact path="/profile" component={Profile} />
-        <Route exact path="/task" component={SingleTask} />
+        <Route exact path="/task/:id" component={ShowTask} />
       </Switch>
     </div>
   </Router>
