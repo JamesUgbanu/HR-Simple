@@ -158,6 +158,18 @@ describe('TASK CONTROLLER ', () => {
         });
     });
   });
+  describe('GET /api/v1/user/:id/tasks endpoint', () => {
+    it('it should return current loggedIn user tasks', (done) => {
+      chai.request(app)
+        .get('/api/v1/user/tasks')
+        .set('token', currrentToken)
+        .end((error, response) => {
+          expect(response).to.have.status(200);
+          expect(response.body).to.be.an('object');
+          done();
+        });
+    });  
+  });
   describe('PUT /task/:id/status endpoint', () => {
     it('it should update the status of a task when correct status is supplied', (done) => {
       chai.request(app)
