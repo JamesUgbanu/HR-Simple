@@ -167,12 +167,7 @@ class TaskController {
    *
    */
   static getUserTasks(request, response) {
-    const { id } = request.params;
-
-    const query = `SELECT * FROM tasks WHERE assignee = '${parseInt(id)}'`;
-    if (request.token.user.id !== parseInt(id)) {
-      return response.status(401).json({ status: 401, error: 'You cannot access this resource' });
-    }
+    const query = `SELECT * FROM tasks WHERE assignee = '${request.token.user.id}'`;
     TaskController.queryDb(query, response);
   }
 

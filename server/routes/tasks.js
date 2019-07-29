@@ -4,7 +4,7 @@ import TaskController from '../controller/TaskController';
 import userAuthenticate from '../middleware/userAuthenticate';
 
 const routes = (app) => {
-  app.get('/api/v1/user/:id/tasks', userAuthenticate.authenticateUser, TaskController.getUserTasks);
+  app.get('/api/v1/user/tasks', userAuthenticate.authenticateUser, TaskController.getUserTasks);
   app.post('/api/v1/task', userAuthenticate.authenticateUser, [
     check('taskName').not().isEmpty().withMessage('Task Name is required'),
     check('description').not().isEmpty().withMessage('Description is required'),
