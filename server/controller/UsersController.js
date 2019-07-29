@@ -204,7 +204,19 @@ class UsersController {
    *
    */
   static getCurrentLoggedIn(request, response) {
-    const query = `SELECT * FROM users WHERE id = '${request.token.user.id}'`;
+    const query = `SELECT id, first_name, last_name FROM users WHERE id = '${request.token.user.id}'`;
+
+    UsersController.queryDb(query, response);
+  }
+
+  /**
+   *  Return all users response
+   *  @param {Object} response
+   *  @return {Object} json
+   *
+   */
+  static getAllusers(request, response) {
+    const query = 'SELECT id, first_name, last_name FROM users';
 
     UsersController.queryDb(query, response);
   }
@@ -218,7 +230,7 @@ class UsersController {
   static queryDb(query, response) {
     client.query(query)
       .then((dbResult) => {
-        UsersController.getUserSuccess(response, dbResult.rows[0]);
+        UsersController.getUserSuccess(response, dbResult.rows);
       })
       .catch();
   }
@@ -233,13 +245,7 @@ class UsersController {
   static getUserSuccess(response, dbResult) {
     return response.status(200).json({
       status: 200,
-      data: {
-        id: dbResult.id,
-        firstName: dbResult.first_name,
-        lastname: dbResult.last_name,
-        email: dbResult.email,
-        isAdmin: dbResult.is_admin
-      }
+      data: dbResult
     });
   }
 }
