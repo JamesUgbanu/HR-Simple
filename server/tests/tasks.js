@@ -52,7 +52,7 @@ describe('TASK CONTROLLER ', () => {
         .post('/api/v1/task')
         .send({
           taskName: 'Update website',
-          dueDate: '2019-07-20 13:12:29',
+          dueDate: 1566008640000,
           description: 'Remove content from header and place it below',
           assignee: 2,
         })
