@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { connect } from "react-redux";
-import { getUserTasks } from "../../actions/tasks";
+import { getUserTasks } from "../../actions/task";
 //import { loadUser } from "../../actions/auth";
 import PropTypes from "prop-types";
 // reactstrap components

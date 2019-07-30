@@ -11,6 +11,8 @@ dotenv.config();
 const app = new Express();
 const port = process.env.PORT || 5000;
 
+// declare middleware
+app.use(cors());
 app.use(bodyParser.urlencoded({
   extended: false,
 }));
@@ -30,7 +32,7 @@ app.use(bodyParser.json());
 // };
 
 // Then pass them to cors:
-app.use(cors());
+
 
 userRoutes(app);
 taskRoutes(app);

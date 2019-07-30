@@ -11,6 +11,8 @@ import ShowTask from './components/Task/showTask';
 import Login from "./components/auth/Login";
 import Alert from "./components/layout/Alert";
 import "./assets/vendor/@fontawesome/css/all.min.css";
+import 'react-date-range/dist/styles.css'; // main style file
+import 'react-date-range/dist/theme/default.css'; // theme css file
 import './App.css';
 //Redux
 import { Provider } from "react-redux";

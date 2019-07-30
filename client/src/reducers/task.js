@@ -21,7 +21,8 @@ import {
         return {
           ...state,
           tasks: payload,
-          loading: false
+          loading: false,
+          dataLoading: false
         };
       case COMPLETE_TASK:
       case GET_TASK:
@@ -29,19 +30,22 @@ import {
         return {
           ...state,
           task: payload,
-          loading: false
+          loading: false,
+          dataLoading: false
         };
       case CREATE_TASK:
         return {
           ...state,
           task: payload,
           loading: false,
-          isAuthenticated: true
+          isAuthenticated: true,
+          dataLoading: false
         };
       case TASK_ERROR:
         return {
           ...state,
-          loading: false
+          loading: false,
+          dataLoading: false
         };
       default:
         return state;

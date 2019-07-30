@@ -7,7 +7,8 @@ import {
   LOGOUT,
   LOGIN_FAIL,
   AUTH_ERROR,
-  START_FETCH
+  START_FETCH,
+  STOP_FETCH
 } from "./types";
 import setAuthToken from "../utils/setAuthToken";
 
@@ -48,7 +49,7 @@ export const login = (email, password) => async dispatch => {
       type: LOGIN_SUCCESS,
       payload: res.data.data
     });
-
+    dispatch({ type: STOP_FETCH });
     dispatch(loadUser());
   } catch (err) {
     if (err.response) {

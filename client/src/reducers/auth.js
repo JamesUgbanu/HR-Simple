@@ -6,7 +6,8 @@ import {
     AUTH_ERROR,
     GET_USERS,
     USERS_ERROR,
-    START_FETCH
+    START_FETCH,
+    STOP_FETCH
   } from "../actions/types";
   
   const initialState = {
@@ -33,14 +34,18 @@ import {
         ...state,
         dataLoading: true
       }
+      case STOP_FETCH:
+      return {
+        ...state,
+        dataLoading: false
+      }
       case LOGIN_SUCCESS:
         localStorage.setItem("token", payload.token);
         return {
           ...state,
           ...payload,
           isAuthenticated: true,
-          loading: false,
-          dataLoading: false
+          loading: false
         };
       case GET_USERS:
         return {
@@ -62,8 +67,7 @@ import {
           ...state,
           token: null,
           isAuthenticated: false,
-          loading: false,
-          dataLoading: false
+          loading: false
         };
       case USERS_ERROR:
         return {
