@@ -2,6 +2,7 @@ import axios from "axios";
 import { setAlert } from "./alert";
 import {
   USER_LOADED,
+  GET_USERS,
   LOGIN_SUCCESS,
   LOGOUT,
   LOGIN_FAIL,
@@ -12,6 +13,7 @@ import setAuthToken from "../utils/setAuthToken";
 
 // Load current User
 export const loadUser = () => async dispatch => {
+
   if (localStorage.token) {
     setAuthToken(localStorage.token);
   }
@@ -21,7 +23,7 @@ export const loadUser = () => async dispatch => {
     
     dispatch({
       type: USER_LOADED,
-      payload: res.data.data
+      payload: res.data.data[0]
     });
   } catch (err) {
     dispatch({
@@ -62,6 +64,20 @@ export const login = (email, password) => async dispatch => {
   }
 };
 
+export const getUsers = () => async dispatch => {
+  try {
+    const res = await axios.get("http://localhost:5000/api/v1/users");
+
+    dispatch({
+      type: GET_USERS,
+      payload: res.data.data
+    });
+  } catch (err) {
+    dispatch({
+      type: AUTH_ERROR
+    });
+  }
+};
 // Logout
 export const logout = () => dispatch => {
   dispatch({ type: LOGOUT });

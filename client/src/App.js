@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import PrivateRoute from "./components/routing/PrivateRoute";
 import Dashboard from './components/Dashboard';
 import Register from './components/Register';
 import UserTable from './components/UserTable';
@@ -34,10 +35,10 @@ return (
       <Switch>
         <Route exact path="/" component={Login} />
         <Route exact path="/dashboard" component={Dashboard} />
-        <Route exact path="/new-user" component={Register} />
-        <Route exact path="/new-task" component={AddTask} />
+        <PrivateRoute exact path="/new-user" component={Register} />
+        <PrivateRoute exact path="/new-task" component={AddTask} />
         <Route exact path="/users" component={UserTable} />
-        <Route exact path="/tasks/me" component={TaskTable} />
+        <PrivateRoute exact path="/tasks/me" component={TaskTable} />
         <Route exact path="/profile" component={Profile} />
         <Route exact path="/task/:id" component={ShowTask} />
       </Switch>

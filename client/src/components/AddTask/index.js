@@ -1,4 +1,8 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { connect } from "react-redux";
+import { getUsers } from "../../actions/auth";
+import PropTypes from "prop-types";
+
 
 // reactstrap components
 import {
@@ -16,8 +20,17 @@ import Navbar from "../Navbar";
 import UserHeader from "../UserHeader";
 import Sidebar from "../Sidebar";
 
-class Register extends React.Component {
-  render() {
+const AddTask = ({
+  getUsers,
+  isAuthenticated,
+  auth: { users, user, loading, dataLoading }
+}) => {
+  useEffect(() => {
+    getUsers();
+  }, [getUsers]);
+          
+          const allUsers = users.filter(euser => euser.id !== user.id);
+
     return (
       <>
        <Sidebar
@@ -27,7 +40,7 @@ class Register extends React.Component {
             imgAlt: "..."
           }}
         />
-        <div className="main-content" ref="mainContent">
+        <div className="main-content">
         <Navbar />
         <UserHeader />
         <Container className="mt--7" fluid>
@@ -48,10 +61,12 @@ class Register extends React.Component {
                         />
                 </FormGroup>
                 <FormGroup>
-                <Input type="select" name="select" id="exampleSelect">
-                    <option selected disabled="disabled">Choose Assigned to</option>
-                    <option>James</option>
-                    <option>Issac</option>
+                <Input type="select" name="select" defaultValue={'DEFAULT'} id="exampleSelect">
+                    <option value="DEFAULT" disabled="disabled">Choose Assigned to</option>
+                    { allUsers.map(user => (
+                        <option key={user.id}>{user.first_name+" "+user.last_name}</option>
+                    ))}
+                    
                   </Input>
                 </FormGroup>
                 <div className="text-center">
@@ -69,6 +84,16 @@ class Register extends React.Component {
       </>
     );
   }
-}
 
-export default Register;
+  AddTask.propTypes = {
+    getUsers: PropTypes.func.isRequired,
+    auth: PropTypes.object.isRequired
+  };
+  const mapStateToProps = state => ({
+    isAuthenticated: state.auth.isAuthenticated,
+    auth: state.auth
+  });
+  export default connect(
+    mapStateToProps,
+    { getUsers }
+  )(AddTask);

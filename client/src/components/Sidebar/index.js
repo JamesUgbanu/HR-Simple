@@ -164,7 +164,7 @@ class Sidebar extends React.Component {
                 </NavLink>
               </NavItem>
               <NavItem>
-                <NavLink href="/tasks">
+                <NavLink href="/tasks/me">
                   <i className="ni ni-spaceship" />
                   View All Tasks
                 </NavLink>

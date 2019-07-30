@@ -17,6 +17,7 @@ import {
 const Usernavbar = ({
   auth: { user }
 }) => {
+  
     return (
       <>
         <Navbar className="navbar-top navbar-dark" expand="md" id="navbar-main">
@@ -40,7 +41,7 @@ const Usernavbar = ({
                     </span>
                     <Media className="ml-2 d-none d-lg-block">
                       <span className="mb-0 text-sm font-weight-bold">
-                        { user ? user.firstName +" "+ user.lastname : null }
+                        { user ? user.first_name +" "+ user.last_name : null }
                       </span>
                     </Media>
                   </Media>
