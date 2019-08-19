@@ -22,8 +22,8 @@ class TaskController {
     const { id } = request.token.user;
 
     const query = {
-      text: 'INSERT INTO tasks(user_id, task_name, due_date, description, assignee) VALUES ($1, $2, $3, $4, $5) RETURNING *',
-      values: [id, taskName, dueDate, description, assignee],
+      text: 'INSERT INTO tasks(user_id, task_name, due_date, description, assignee) VALUES ($1, $2, to_timestamp($3/1000.0), $4, $5) RETURNING *',
+      values: [parseInt(id), taskName, dueDate, description, assignee],
     };
     TaskController.addTaskQuery(response, query);
   }

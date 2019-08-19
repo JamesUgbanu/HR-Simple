@@ -17,7 +17,7 @@ const UserTaskItem = ({
         <Fragment>
         <tbody>
         <tr key={id}>
-        <td>{authUser.firstName+" " +authUser.lastname}</td>
+        <td>{authUser.first_name+" " +authUser.last_name}</td>
         <td>Joseph Osinachi</td>
         <td><Moment format="MM/DD/YYYY">{created_on}</Moment></td>
         <td><Moment format="MM/DD/YYYY">{due_date}</Moment></td>

@@ -14,3 +14,4 @@ export const COMPLETE_TASK = "COMPLETE_TASK";
 export const GET_TASK = "GET_TASK";
 export const UPDATE_TASK = "UPDATE_TASK";
 export const CREATE_TASK = "CREATE_TASK";
+export const STOP_FETCH = "STOP_FETCH";

@@ -2,6 +2,7 @@ import React from "react";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
+import { logout } from "../../actions/auth";
 // reactstrap components
 import {
   DropdownMenu,
@@ -15,8 +16,10 @@ import {
 } from "reactstrap";
 
 const Usernavbar = ({
+  logout,
   auth: { user }
 }) => {
+  
     return (
       <>
         <Navbar className="navbar-top navbar-dark" expand="md" id="navbar-main">
@@ -40,7 +43,7 @@ const Usernavbar = ({
                     </span>
                     <Media className="ml-2 d-none d-lg-block">
                       <span className="mb-0 text-sm font-weight-bold">
-                        { user ? user.firstName +" "+ user.lastname : null }
+                        { user ? user.first_name +" "+ user.last_name : null }
                       </span>
                     </Media>
                   </Media>
@@ -50,7 +53,7 @@ const Usernavbar = ({
                     <h6 className="text-overflow m-0">Welcome!</h6>
                   </DropdownItem>
                   <DropdownItem divider />
-                  <DropdownItem href="/">
+                  <DropdownItem onClick={() => logout()}>
                     <i className="ni ni-user-run" />
                     <span>Logout</span>
                   </DropdownItem>
@@ -71,5 +74,6 @@ const Usernavbar = ({
   });
   
   export default connect(
-    mapStateToProps
+    mapStateToProps, 
+    { logout }
   )(Usernavbar);

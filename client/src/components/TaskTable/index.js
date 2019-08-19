@@ -1,9 +1,8 @@
 import React, { useEffect } from "react";
 import { connect } from "react-redux";
-import { getUserTasks } from "../../actions/tasks";
+import { getUserTasks } from "../../actions/task";
 //import { loadUser } from "../../actions/auth";
 import PropTypes from "prop-types";
-
 // reactstrap components
 import {
     Card,
@@ -24,17 +23,16 @@ import Navbar from "../Navbar";
 import UserHeader from "../UserHeader";
 import Sidebar from "../Sidebar";
 import TaskItem from "./TaskItem";
-import Spinner from "../layout/Spinner";
 
 const UserTask = ({
   getUserTasks,
-  auth: { user, loading },
+  auth: { user, loading, dataLoading },
   tasks: { tasks }
 }) => {
   useEffect(() => {
     getUserTasks();
   }, [getUserTasks]);
-   
+
     return (
       <>
        <Sidebar
@@ -89,7 +87,6 @@ const UserTask = ({
                           </DropdownMenu>
                         </UncontrolledDropdown>
                 </CardHeader>
-                { !tasks.data ? <Spinner /> :
                 <Table className="align-items-center table-flush" responsive>
                   <thead className="thead-light">
                     <tr>
@@ -102,17 +99,16 @@ const UserTask = ({
                       <th scope="col">Action</th>
                     </tr>
                   </thead>
-                    { tasks.data.length > 0 ? (
-              tasks.data.map(task => (
+                    { tasks.length ? (
+              tasks.map(task => (
                 <TaskItem key={task.id} task={task} authUser={user} />
               ))
             ) : (
               <tbody>
-              <tr style={{ textAlign: "right" }}>No Tasks Found!</tr>
+              <tr style={{ textAlign: "right" }}><td>No Tasks Found!</td></tr>
               </tbody>
             )}
             </Table>
-                }
                 <CardFooter className="py-4">
                   <nav aria-label="...">
                     <Pagination
